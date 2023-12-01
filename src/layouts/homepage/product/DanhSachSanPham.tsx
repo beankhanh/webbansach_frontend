@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import SachModel from "../../models/SachModel";
 import SachProps from "./components/SachProps";
 import { layToanBoSach } from "../../../api/SachAPI";
-import { error } from "console";
 const DanhSachSanPham: React.FC=() =>{
     const [danhSachQuyenSach, setDanhSachQuyenSach]= useState<SachModel[]>([]);
     const [dangTaiDuLieu, setDangTaiDuLieu]= useState(true);
