@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import SachModel from "../../models/SachModel";
-import HinhAnhModel from "../../models/HinhAnhModel";
+import SachModel from "../../../models/SachModel";
+import HinhAnhModel from "../../../models/HinhAnhModel";
 import { lay1AnhCuaMotSach } from "../../../api/HinhAnh";
 
 
@@ -57,7 +57,7 @@ const CarouselItem: React.FC<CarouselItemInterface>=(props)=>{
             <div className="col-7 ">
                 <div className="carousel-caption d-none d-md-block text-dark">
                     <h5>{props.sach.tenSach}</h5>
-                    <p>{props.sach.moTa}</p>
+                
                 </div>
             </div>
         </div>

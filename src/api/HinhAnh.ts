@@ -1,7 +1,9 @@
 import React from "react";
 import { my_request } from "./request";
 import BookApi from "./api";
-import HinhAnhModel from "../layouts/models/HinhAnhModel";
+import HinhAnhModel from "../models/HinhAnhModel";
+import Pagination from "../models/Pagination";
+;
 
 async function layAnh(duongDan:string): Promise<HinhAnhModel[]> {
     const ketQua: HinhAnhModel[]=[];
@@ -27,12 +29,12 @@ async function layAnh(duongDan:string): Promise<HinhAnhModel[]> {
 }
 export async function layToanBoAnhCuaMotSach(maSach:number): Promise<HinhAnhModel[]> {
         //Xác định endpoint
-        const duongDan: string =`http://localhost:8080/sach/${maSach}/danhSachHinhAnh`;
+        const duongDan: string =` ${BookApi}/${maSach}/danhSachHinhAnh`;
         return layAnh(duongDan);
 }
 export async function lay1AnhCuaMotSach(maSach:number): Promise<HinhAnhModel[]> {
-    //const Paginations  = new Pagination('0','1','maHinhAnh','asc');
+    const paginations  = new Pagination(0,1,'maHinhAnh','asc');
     //Xác định endpoint
-    const duongDan: string =`http://localhost:8080/sach/${maSach}/danhSachHinhAnh?sort=maHinhAnh,asc&page=0&size=1`;
+    const duongDan: string =` ${BookApi}/${maSach}/danhSachHinhAnh?${paginations.toQueryString()}`;
     return layAnh(duongDan);
 }

@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
-import SachModel from "../../models/SachModel";
-import { lay3SachMoi } from "../../../api/SachAPI";
+import SachModel from "../../../models/SachModel";
+import { lay3SachMoiNhat } from "../../../api/SachAPI";
 import CarouselItem from "./CarouselItem";
 
 const Carousel:React.FC=()=> {
-    const [danhSach3Sach, setDanhSach3Sach]= useState<SachModel[]>([]);
-    const [dangTaiDuLieu, setDangTaiDuLieu]= useState(true);
-    const [baoLoi, setBaoLoi]= useState(null);
-    
-    useEffect(()=>{
-        lay3SachMoi().then(
-            sachData=>{
-                setDanhSach3Sach(sachData);
+    const [danhSach3Sach, setDanhSach3Sach] = useState<SachModel[]>([]);
+    const [dangTaiDuLieu, setDangTaiDuLieu] = useState(true);
+    const [baoLoi, setBaoLoi] = useState(null);
+
+    useEffect(() => {
+        lay3SachMoiNhat().then(
+            kq => {
+                setDanhSach3Sach(kq.ketQua);
                 setDangTaiDuLieu(false);
             }
         ).catch(
-            error=>{
+            error => {
                 setDangTaiDuLieu(false);
                 setBaoLoi(error.message);
             }
         );
-
-    },[]// chỉ gọi 1 lần
+    }, [] // Chi goi mot lan
     )
     if (dangTaiDuLieu) {
         return (
@@ -39,29 +38,31 @@ const Carousel:React.FC=()=> {
         );
     }
     return (
-        <div>
-            <div id="carouselExampleDark" className="carousel carousel-dark slide">
-                <div className="carousel-inner">
-                    <div className="carousel-item active" data-bs-interval="10000">
-                        <CarouselItem key={0} sach={danhSach3Sach[0]} />
-                    </div>
-                    <div className="carousel-item " data-bs-interval="10000">
-                        <CarouselItem key={1} sach={danhSach3Sach[1]} />
-                    </div>
-                    <div className="carousel-item " data-bs-interval="10000">
-                        <CarouselItem key={2} sach={danhSach3Sach[2]} />
-                    </div>
+        <div id="carouselExampleCaptions" className="carousel slide" >
+            <div className="carousel-inner">
+                <div className="carousel-item active" data-bs-interval="10000">
+                    <CarouselItem key={0} sach={danhSach3Sach[0]}/>
                 </div>
-                <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Previous</span>
-                </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Next</span>
-                </button>
+
+                <div className="carousel-item " data-bs-interval="10000">
+                    <CarouselItem key={1} sach={danhSach3Sach[1]}/>
+                </div>
+                <div className="carousel-item " data-bs-interval="10000">
+                    <CarouselItem key={2} sach={danhSach3Sach[2]}/>
+                </div>
             </div>
+            <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span className="visually-hidden text-dark">Previous</span>
+            </button>
+            <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                <span className="visually-hidden text-dark">Next</span>
+            </button>
+            
         </div>
+
+        
     );
 }
 export default Carousel;
