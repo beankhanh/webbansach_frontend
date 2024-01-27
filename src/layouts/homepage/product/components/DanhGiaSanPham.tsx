@@ -57,12 +57,17 @@ const DanhGiaSanPham: React.FC<DanhGiaSanPham> = (props) => {
                 danhSachDanhGia.map((danhGia, index) => (
                     <div className="row">
                         <div className="col-4  ">
-                            <p>{renderRating(danhGia.diemXepHang?danhGia.diemXepHang:0)}</p>
+                            <p>{renderRating(danhGia.diemXepHang ? danhGia.diemXepHang : 0)}</p>
                         </div>
                         <div className="col-8 ">
                             <p>{danhGia.nhanXet}</p>
                         </div>
                     </div>
+                    // <div className='mb-3' key={index}>
+                    //     <div className='d-flex'>
+                    //         <NguoiDungDanhGia danhGia={danhGia} />
+                    //     </div>
+                    // </div>
                 )
                 )
             }

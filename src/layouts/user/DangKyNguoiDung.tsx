@@ -1,21 +1,36 @@
 import React, { useState } from "react";
+
 function DangKyNguoiDung() {
-    const [tenDangNhap, setTenDangNhap] = useState('');
-    const [email, setEmail] = useState('');
-    const [hoDem, setHoDem] = useState('');
-    const [ten, setTen] = useState('');
-    const [soDienThoai, setSoDienThoai] = useState('');
-    const [matKhau, setMatKhau] = useState('');
-    const [matKhauNhapLai, setMatKhauNhapLai] = useState('');
-    const [gioiTinh, setGioiTinh] = useState('');
+
+    const [tenDangNhap, setTenDangNhap] = useState("");
+    const [email, setEmail] = useState("");
+    const [hoDem, setHoDen] = useState("");
+    const [ten, setTen] = useState("");
+    const [soDienThoai, setSoDienThoai] = useState("");
+    const [matKhau, setMatKhau] = useState("");
+    const [matKhauLapLai, setMatKhauLapLai] = useState("");
+    const [gioiTinh, setGioiTinh] = useState('M');
+    const [avatar, setAvatar] = useState<File | null>(null);
 
 
+    // Các biến báo lỗi
     const [errorTenDangNhap, setErrorTenDangNhap] = useState("");
     const [errorEmail, setErrorEmail] = useState("");
     const [errorMatKhau, setErrorMatKhau] = useState("");
     const [errorMatKhauLapLai, setErrorMatKhauLapLai] = useState("");
     const [thongBao, setThongBao] = useState("");
 
+    // Convert file to Base64
+    const getBase64 = (file: File): Promise<string | null> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result ? (reader.result as string) : null);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    // Xử lý thông tin
     const handleSubmit = async (e: React.FormEvent) => {
         // Clear any previous error messages
         setErrorTenDangNhap('');
@@ -28,14 +43,17 @@ function DangKyNguoiDung() {
 
         // Kiểm tra các điều kiện và gán kết quả vào biến
         const isTenDangNhapValid = !await kiemTraTenDangNhapDaTonTai(tenDangNhap);
-        const isEmailValid = !await kiemTraEmailTonTai(email);
-        const isMatKhauValid = !kiemTraMatKhauTonTai(matKhau);
-        const isMatKhauLapLaiValid = !kiemTraMatKhauNhapLaiTonTai(matKhauNhapLai);
+        const isEmailValid = !await kiemTraEmailDaTonTai(email);
+        const isMatKhauValid = !kiemTraMatKhau(matKhau);
+        const isMatKhauLapLaiValid = !kiemTraMatKhauLapLai(matKhauLapLai);
 
         // Kiểm tra tất cả các điều kiện
         if (isTenDangNhapValid && isEmailValid && isMatKhauValid && isMatKhauLapLaiValid) {
+            const base64Avatar = avatar ? await getBase64(avatar) : null;
+            console.log("avatar: " + base64Avatar);
             try {
                 const url = 'http://localhost:8080/tai-khoan/dang-ky';
+
 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -49,7 +67,8 @@ function DangKyNguoiDung() {
                         hoDem: hoDem,
                         ten: ten,
                         soDienThoai: soDienThoai,
-                        gioiTinh: gioiTinh
+                        gioiTinh: gioiTinh,
+                        avatar: base64Avatar
                     })
                 }
                 );
@@ -65,56 +84,73 @@ function DangKyNguoiDung() {
             }
         }
     }
-    //Kiem tra ten dang nhap
+
+
+    // KIỂM TRA TÊN ĐĂNG NHẬP ////////////////////////////////////////////////
     const kiemTraTenDangNhapDaTonTai = async (tenDangNhap: string) => {
+        // end-point
         const url = `http://localhost:8080/nguoi-dung/search/existsByTenDangNhap?tenDangNhap=${tenDangNhap}`;
+        console.log(url);
+        // call api
         try {
             const response = await fetch(url);
             const data = await response.text();
-            if (data === `true`) {
-                setErrorTenDangNhap("Tên đăng nhập đã tồn tại!")
+            if (data === "true") {
+                setErrorTenDangNhap("Tên đăng nhập đã tồn tại!");
                 return true;
             }
             return false;
         } catch (error) {
             console.error("Lỗi khi kiểm tra tên đăng nhập:", error);
-            return false;
+            return false; // Xảy ra lỗi
         }
     }
+
     const handleTenDangNhapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //Thay đổi giá trị
-        setTenDangNhap(e.target.value)
-        //Kiểm tra
+        // Thay đổi giá trị
+        setTenDangNhap(e.target.value);
+        // Kiểm tra
         setErrorTenDangNhap('');
-        //Kiểm tra sự tồn tại
+        // Kiểm tra sự tồn tại
         return kiemTraTenDangNhapDaTonTai(e.target.value);
     }
-    //Kiem tra email
-    const kiemTraEmailTonTai = async (email: string) => {
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    // KIỂM TRA TÊN ĐĂNG NHẬP ////////////////////////////////////////////////
+    const kiemTraEmailDaTonTai = async (email: string) => {
+        // end-point
         const url = `http://localhost:8080/nguoi-dung/search/existsByEmail?email=${email}`;
+        console.log(url);
+        // call api
         try {
             const response = await fetch(url);
             const data = await response.text();
-            if (data === `true`) {
-                setErrorEmail("Email đã tồn tại!")
+            if (data === "true") {
+                setErrorEmail("Email đã tồn tại!");
                 return true;
             }
             return false;
         } catch (error) {
             console.error("Lỗi khi kiểm tra email:", error);
-            return false;
+            return false; // Xảy ra lỗi
         }
     }
+
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //Thay đổi giá trị
-        setEmail(e.target.value)
-        //Kiểm tra
+        // Thay đổi giá trị
+        setEmail(e.target.value);
+        // Kiểm tra
         setErrorEmail('');
-        //Kiểm tra sự tồn tại
-        return kiemTraEmailTonTai(e.target.value);
+        // Kiểm tra sự tồn tại
+        return kiemTraEmailDaTonTai(e.target.value);
     }
-    //Kiem tra mat khau
-    const kiemTraMatKhauTonTai = (matKhau: string) => {
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // KIỂM TRA MẬT KHẨU ////////////////////////////////////////////////
+    const kiemTraMatKhau = (matKhau: string) => {
         const passwordRegex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
         if (!passwordRegex.test(matKhau)) {
             setErrorMatKhau("Mật khẩu phải có ít nhất 8 ký tự và bao gồm ít nhất 1 ký tự đặc biệt (!@#$%^&*)");
@@ -124,32 +160,46 @@ function DangKyNguoiDung() {
             return false;
         }
     }
+
     const handleMatKhauChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //Thay đổi giá trị
-        setMatKhau(e.target.value)
-        //Kiểm tra
+        // Thay đổi giá trị
+        setMatKhau(e.target.value);
+        // Kiểm tra
         setErrorMatKhau('');
-        //Kiểm tra sự tồn tại
-        return kiemTraMatKhauTonTai(e.target.value);
+        // Kiểm tra sự tồn tại
+        return kiemTraMatKhau(e.target.value);
     }
-    //Kiem tra mat khau nhap lai
-    const kiemTraMatKhauNhapLaiTonTai = (matKhauNhapLai: string) => {
-        if (matKhauNhapLai !== matKhau) {
-            setErrorMatKhauLapLai("Mật khẩu không trùng");
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // KIỂM TRA MẬT KHẨU LẶP LẠI ////////////////////////////////////////////////
+    const kiemTraMatKhauLapLai = (matKhauLapLai: string) => {
+        if (matKhauLapLai !== matKhau) {
+            setErrorMatKhauLapLai("Mật khẩu không trùng khớp.");
             return true;
         } else {
-            setErrorMatKhau(""); // Mật khẩu trùng khớp
+            setErrorMatKhauLapLai(""); // Mật khẩu trùng khớp
             return false;
         }
     }
-    const handleMatKhauNhapLaiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //Thay đổi giá trị
-        setMatKhauNhapLai(e.target.value)
-        //Kiểm tra
-        setErrorMatKhauLapLai('')
-        //Kiểm tra sự tồn tại
-        return kiemTraMatKhauNhapLaiTonTai(e.target.value);
+
+    const handleMatKhauLapLaiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Thay đổi giá trị
+        setMatKhauLapLai(e.target.value);
+        // Kiểm tra
+        setErrorMatKhauLapLai('');
+        // Kiểm tra sự tồn tại
+        return kiemTraMatKhauLapLai(e.target.value);
     }
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const file = e.target.files[0];
+            setAvatar(file);
+        }
+    };
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     return (
         <div className="container">
             <h1 className="mt-5 text-center">Đăng ký</h1>
@@ -189,13 +239,13 @@ function DangKyNguoiDung() {
                         <div style={{ color: "red" }}>{errorMatKhau}</div>
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="matKhauNhapLai" className="form-label">Mật khẩu nhập lại</label>
+                        <label htmlFor="matKhauLapLai" className="form-label">Nhập lại mật khẩu</label>
                         <input
                             type="password"
-                            id="matKhauNhapLai"
+                            id="matKhauLapLai"
                             className="form-control"
-                            value={matKhauNhapLai}
-                            onChange={handleMatKhauNhapLaiChange}
+                            value={matKhauLapLai}
+                            onChange={handleMatKhauLapLaiChange}
                         />
                         <div style={{ color: "red" }}>{errorMatKhauLapLai}</div>
                     </div>
@@ -206,7 +256,7 @@ function DangKyNguoiDung() {
                             id="hoDem"
                             className="form-control"
                             value={hoDem}
-                            onChange={(e) => setHoDem(e.target.value)}
+                            onChange={(e) => setHoDen(e.target.value)}
                         />
                     </div>
                     <div className="mb-3">
@@ -239,6 +289,16 @@ function DangKyNguoiDung() {
                             onChange={(e) => setGioiTinh(e.target.value)}
                         />
                     </div>
+                    <div className="mb-3">
+                        <label htmlFor="avatar" className="form-label">Avatar</label>
+                        <input
+                            type="file"
+                            id="avatar"
+                            className="form-control"
+                            accept="images/*"
+                            onChange={handleAvatarChange}
+                        />
+                    </div>
                     <div className="text-center">
                         <button type="submit" className="btn btn-primary">Đăng Ký</button>
                         <div style={{ color: "green" }}>{thongBao}</div>
@@ -247,6 +307,8 @@ function DangKyNguoiDung() {
                 </form>
             </div>
         </div>
+
     );
 }
+
 export default DangKyNguoiDung;

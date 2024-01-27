@@ -8,40 +8,40 @@ import renderRating from "../../utils/XepHangSao";
 import DinhDangSo from "../../utils/DinhDangSo";
 
 
-const ChiTietSanPham: React.FC=()=>{
+const ChiTietSanPham: React.FC = () => {
 
-    const {maSach}= useParams(); 
-    let maSachNumber= 0;
+    const { maSach } = useParams();
+    let maSachNumber = 0;
     try {
-        maSachNumber= parseInt(maSach+'');
+        maSachNumber = parseInt(maSach + '');
     } catch (error) {
-        maSachNumber=0;
-        console.error('Error:',error);
+        maSachNumber = 0;
+        console.error('Error:', error);
     }
-    if(Number.isNaN(maSachNumber))
-    maSachNumber=0;
+    if (Number.isNaN(maSachNumber))
+        maSachNumber = 0;
 
-    const [sach, setSach]= useState<SachModel|null>(null);
-    const [dangTaiDuLieu, setDangTaiDuLieu]= useState(true);
-    const [baoLoi, setBaoLoi]= useState(null);
-    const [soLuong, setSoLuong]= useState(1);
+    const [sach, setSach] = useState<SachModel | null>(null);
+    const [dangTaiDuLieu, setDangTaiDuLieu] = useState(true);
+    const [baoLoi, setBaoLoi] = useState(null);
+    const [soLuong, setSoLuong] = useState(1);
 
-    const tangSoLuong =()=>{
-        const soLuongTonKho =(sach && sach.soLuong?sach.soLuong:0);
-        if(soLuong<soLuongTonKho){
-            setSoLuong(soLuong+1)
+    const tangSoLuong = () => {
+        const soLuongTonKho = (sach && sach.soLuong ? sach.soLuong : 0);
+        if (soLuong < soLuongTonKho) {
+            setSoLuong(soLuong + 1)
         }
     }
-    const giamSoLuong =()=>{
-        if(soLuong>2){
-            setSoLuong(soLuong-1)
+    const giamSoLuong = () => {
+        if (soLuong > 2) {
+            setSoLuong(soLuong - 1)
         }
     }
 
-    const handleSoLuongChange =( event: React.ChangeEvent<HTMLInputElement>)=>{
+    const handleSoLuongChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const soLuongMoi = parseInt(event.target.value);
-        const soLuongTonKho =(sach && sach.soLuong?sach.soLuong:0);
-        if(!isNaN(soLuongMoi)&& soLuongMoi>=1 && soLuongMoi<=soLuongTonKho){
+        const soLuongTonKho = (sach && sach.soLuong ? sach.soLuong : 0);
+        if (!isNaN(soLuongMoi) && soLuongMoi >= 1 && soLuongMoi <= soLuongTonKho) {
             setSoLuong(soLuongMoi);
         }
     }
@@ -52,29 +52,29 @@ const ChiTietSanPham: React.FC=()=>{
     const handleThemVaoGioHang = () => {
 
     }
-    useEffect(()=>{
-        laySachTheoMaSach(maSachNumber).then((sach)=>{
+    useEffect(() => {
+        laySachTheoMaSach(maSachNumber).then((sach) => {
             setSach(sach);
             setDangTaiDuLieu(false)
         }
 
-        ).catch((error)=>{
+        ).catch((error) => {
             setBaoLoi(error.message);
             setDangTaiDuLieu(false);
         }
         )
-    },[maSach]
+    }, [maSach]
     )
-    
-    if(dangTaiDuLieu){
-        return(
+
+    if (dangTaiDuLieu) {
+        return (
             <div>
                 <h1>Đang tải dữ liệu</h1>
             </div>
         );
     }
-    if(baoLoi){
-        return(
+    if (baoLoi) {
+        return (
             <div>
                 <h1>Gặp lỗi : {baoLoi}</h1>
             </div>
@@ -87,9 +87,9 @@ const ChiTietSanPham: React.FC=()=>{
             </div>
         );
     }
-    return(
+    return (
         <div className="container">
-            <div className="row mt-4 mb-4"> 
+            <div className="row mt-4 mb-4">
                 <div className="col-4">
                     <HinhAnhSanPham maSach={maSachNumber}></HinhAnhSanPham>
                 </div>
@@ -100,14 +100,14 @@ const ChiTietSanPham: React.FC=()=>{
                                 {sach.tenSach}
                             </h1>
                             <h4>
-                                {renderRating(sach.trungBinhXepHang?sach.trungBinhXepHang:0)}
+                                {renderRating(sach.trungBinhXepHang ? sach.trungBinhXepHang : 0)}
                             </h4>
                             <h4>
-                                {DinhDangSo(sach.giaBan?sach.giaBan:0)} đ
+                                {DinhDangSo(sach.giaBan ? sach.giaBan : 0)} đ
                             </h4>
-                            <hr/>
-                            <div dangerouslySetInnerHTML={{__html:(sach.moTa+'')}}/>
-                                <hr/>
+                            <hr />
+                            <div dangerouslySetInnerHTML={{ __html: (sach.moTa + '') }} />
+                            <hr />
                         </div>
                         <div className="col-4">
                             <div>
@@ -121,10 +121,10 @@ const ChiTietSanPham: React.FC=()=>{
                                 </div>
                                 <div>
                                     {
-                                        sach.giaBan&&(
+                                        sach.giaBan && (
                                             <div className="mt-2 text-center">
-                                                    Số tiền tạm tính <br/>
-                                                    <h4>{DinhDangSo(soLuong*sach.giaBan)} đ</h4>
+                                                Số tiền tạm tính <br />
+                                                <h4>{DinhDangSo(soLuong * sach.giaBan)} đ</h4>
                                             </div>
                                         )
                                     }
@@ -138,8 +138,8 @@ const ChiTietSanPham: React.FC=()=>{
                     </div>
                 </div>
             </div>
-            <div className="row mt-4 mb-4"> 
-            <DanhGiaSanPham maSach={maSachNumber} />
+            <div className="row mt-4 mb-4">
+                <DanhGiaSanPham maSach={maSachNumber} />
             </div>
 
 
