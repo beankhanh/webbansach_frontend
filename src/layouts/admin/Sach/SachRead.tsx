@@ -4,6 +4,7 @@ import { layToanBoSach, timKiemSach } from "../../../api/SachAPI";
 import { PhanTrang } from "../../utils/PhanTrang";
 import Sach from "./Sach";
 import { Link } from "react-router-dom";
+import SachForm from "./SachForm";
 const SachRead: React.FC = () => {
     const [danhSachQuyenSach, setDanhSachQuyenSach] = useState<SachModel[]>([]);
     const [dangTaiDuLieu, setDangTaiDuLieu] = useState(true);
@@ -12,6 +13,16 @@ const SachRead: React.FC = () => {
     const [tongSoTrang, setTongSoTrang] = useState(0);
     const [tongSoSach, setTongSoSach] = useState(0);
     const [showModal, setShowModal] = useState(false);
+
+    // ... (các state khác)
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
 
     useEffect(() => {
@@ -52,11 +63,16 @@ const SachRead: React.FC = () => {
             <div className="row mt-4">
                 <div className="col">
                     <div className="col">
-                        <Link to={`/admin/sach/them-sach`} className="btn btn-primary">
+                        <button onClick={openModal} className="btn btn-primary">
+
                             Thêm Sách
-                        </Link>
+
+                        </button>
                     </div>
                 </div>
+                {showModal && (
+                    <SachForm closeModal={closeModal} />
+                )}
                 {/* Hiển thị phần thead ở đây */}
                 <table className="table">
                     <thead>
